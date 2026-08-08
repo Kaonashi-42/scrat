@@ -37,6 +37,19 @@
   box-sizing: border-box;
 }
 
+/* WebKit draws focus rings and text selection in the macOS system blue, which
+   is the one colour in the app that isn't ours. Overridden here once rather
+   than per-component. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
 body {
   margin: 0;
 }
