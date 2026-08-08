@@ -23,6 +23,10 @@
   <img src="docs/Scrat.png" alt="Scrat's Details screen showing spending and income breakdowns by category" width="900" />
 </p>
 
+<p align="center">
+  <a href="docs/Scrat - Demo.mp4">Watch the demo</a>
+</p>
+
 ## What is Scrat?
 
 Scrat is a desktop app for tracking personal finances — accounts,
