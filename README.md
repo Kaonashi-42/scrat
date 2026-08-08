@@ -24,7 +24,7 @@
 </p>
 
 <p align="center">
-  <a href="docs/Scrat - Demo.mp4">Watch the demo</a>
+  <a href="https://youtu.be/lUeJKgudR54">Watch the demo</a>
 </p>
 
 ## What is Scrat?
