@@ -17,15 +17,25 @@ REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 RANGE="${1:-}"
 NEW_TAG="${2:-}"
 
-PREVIOUS_TAG=$(git -C "$REPO_ROOT" describe --tags --abbrev=0 --match 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null || true)
-
 if [ -z "$RANGE" ]; then
-  if [ -n "$PREVIOUS_TAG" ]; then
-    RANGE="$PREVIOUS_TAG..HEAD"
+  last_tag=$(git -C "$REPO_ROOT" describe --tags --abbrev=0 --match 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null || true)
+  if [ -n "$last_tag" ]; then
+    RANGE="$last_tag..HEAD"
   else
     RANGE="HEAD"
   fi
 fi
+
+# The compare link has to span exactly what the notes list. Deriving the
+# starting point from the range rather than from the newest tag is what keeps
+# those two in agreement: the caller may deliberately reach further back than
+# the previous tag (notes cover everything since the previous *release*, and
+# tags are pushed for every releasable commit, released or not).
+case "$RANGE" in
+  *..*) PREVIOUS_TAG="${RANGE%%..*}" ;;
+  *)    PREVIOUS_TAG="" ;;
+esac
+RANGE_TIP="${RANGE##*..}"
 
 # One line per commit: "<short sha>\x1f<subject>". %s is a single line by
 # definition, so no commit message can inject extra list items. The previous
@@ -98,7 +108,7 @@ section 'Internal'    '^(tests?|chore|ops|ci|build|style|clean|refacto|refactor)
 section 'Other'       '__untyped__'
 
 printf -- '---\n\n'
-printf 'Built from `%s`.\n' "$(git -C "$REPO_ROOT" rev-parse --short HEAD)"
+printf 'Built from `%s`.\n' "$(git -C "$REPO_ROOT" rev-parse --short "${RANGE_TIP}^{commit}")"
 
 # The compare link only exists once there is a previous release to compare to.
 if [ -n "$PREVIOUS_TAG" ] && [ -n "$NEW_TAG" ] && [ -n "${GITHUB_REPOSITORY:-}" ]; then

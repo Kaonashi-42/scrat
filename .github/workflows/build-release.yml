@@ -196,21 +196,37 @@ jobs:
           pattern: bundles-*
           merge-multiple: true
 
-      # Unlike the old single-workflow pipeline, the tag being released already
-      # exists by the time this runs (tag.yml pushed it earlier). Plain
-      # `git describe` on the tagged commit would resolve to itself, not the
-      # previous release, so the previous tag is found from its parent commit
-      # instead and the range is built explicitly.
+      # The notes must cover everything since the previous *release*, not since
+      # the previous tag. tag.yml tags every releasable commit on main, but this
+      # workflow only runs when someone decides a tag is worth shipping — so
+      # most tags never become releases, and anything landing in the tags
+      # between two releases would silently never be mentioned anywhere.
+      #
+      # Note also that the tag being released already exists by the time this
+      # runs (tag.yml pushed it earlier), so the walk starts from its parent —
+      # `git describe` on the tagged commit itself would just resolve to itself.
       - name: Write the release notes
         env:
           TAG: ${{ needs.resolve.outputs.tag }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          previous_tag=$(git describe --tags --abbrev=0 --match 'v[0-9]*.[0-9]*.[0-9]*' "${TAG}^" 2>/dev/null || true)
+          # One API call, then a local walk: newest-first over the tags that are
+          # ancestors of this one, stopping at the first that was actually
+          # published. Drafts don't count — nobody has seen their notes.
+          released=$(gh release list --limit 200 --exclude-drafts --json tagName --jq '.[].tagName')
+          previous_tag=""
+          for candidate in $(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-creatordate --merged "${TAG}^" 2>/dev/null); do
+            if printf '%s\n' "$released" | grep -qxF "$candidate"; then
+              previous_tag="$candidate"
+              break
+            fi
+          done
           if [ -n "$previous_tag" ]; then
             range="$previous_tag..$TAG"
           else
             range="$TAG"
           fi
+          echo "Notes cover $range" >> "$GITHUB_STEP_SUMMARY"
           ./scripts/release-notes.sh "$range" "$TAG" > release-notes.md
           cat >> release-notes.md <<'EOF'
 
