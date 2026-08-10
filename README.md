@@ -15,7 +15,7 @@
   <a href="https://github.com/Kaonashi-42/scrat/releases"><img src="https://img.shields.io/badge/status-alpha-yellow.svg" alt="Status: alpha"></a>
 </p>
 
-> Track your accounts, transactions, categories, and spending over time, all
+> Desktop app to track your accounts, transactions, categories, and spending over time, all
 > in one encrypted file on your own disk, with nothing ever sent anywhere.
 
 
