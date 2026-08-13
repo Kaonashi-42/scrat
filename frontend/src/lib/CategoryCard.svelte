@@ -74,6 +74,12 @@
   function autofocus(node: HTMLInputElement) {
     node.focus();
   }
+
+  /* Enter means "I'm done": blur so the name stops looking editable. The change
+     event fires on blur, so the rename still commits exactly once. */
+  function blurOnEnter(event: KeyboardEvent & { currentTarget: HTMLInputElement }) {
+    if (event.key === "Enter") event.currentTarget.blur();
+  }
 </script>
 
 <section class="card" id="category-{category.id}" class:highlight>
@@ -110,6 +116,7 @@
       value={category.name}
       readonly={category.is_default}
       aria-label={t("categoryCard.categoryName")}
+      onkeydown={blurOnEnter}
       onchange={(e) => onRename(category.id, e.currentTarget.value)}
     />
     {#if !category.is_default}
@@ -132,6 +139,7 @@
           readonly={child.is_default}
           aria-label={t("categoryCard.subcategoryName")}
           oninput={(e) => (drafts[child.id] = e.currentTarget.value)}
+          onkeydown={blurOnEnter}
           onchange={(e) => onRename(child.id, e.currentTarget.value)}
         />
         {#if !child.is_default}
