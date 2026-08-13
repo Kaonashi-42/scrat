@@ -2997,7 +2997,6 @@ dependencies = [
  "csv",
  "encoding_rs",
  "scrat-domain",
- "tempfile",
 ]
 
 [[package]]

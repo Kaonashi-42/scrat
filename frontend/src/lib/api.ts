@@ -298,8 +298,6 @@ export const api = {
     invoke<void>("rename_category", { id, name }),
   setCategoryIcon: (id: string, icon: string) =>
     invoke<void>("set_category_icon", { id, icon }),
-  moveCategory: (id: string, parentId: string | null) =>
-    invoke<void>("move_category", { id, parentId }),
   deleteCategory: (id: string, reassignTo: string | null) =>
     invoke<void>("delete_category", { id, reassignTo }),
   /** The category the "Mean monthly spend" card treats as rent — `null` when

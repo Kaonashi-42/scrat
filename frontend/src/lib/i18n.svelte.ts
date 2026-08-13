@@ -96,19 +96,8 @@ const en = {
   // ---- Shared vocabulary ----
   "common.save": "Save",
   "common.cancel": "Cancel",
-  "common.delete": "Delete",
-  "common.edit": "Edit",
-  "common.rename": "Rename",
-  "common.close": "Close",
-  "common.confirm": "Confirm",
-  "common.back": "Back",
-  "common.next": "Next",
-  "common.done": "Done",
   "common.loading": "Loading…",
-  "common.search": "Search",
   "common.none": "None",
-  "common.all": "All",
-  "common.total": "Total",
   "common.income": "Income",
   "common.expenses": "Expenses",
   "common.balance": "Balance",
@@ -119,9 +108,6 @@ const en = {
   "common.account": "Account",
   "common.subcategory": "Subcategory",
   "common.uncategorized": "Uncategorized",
-  "common.optional": "optional",
-  "common.yes": "Yes",
-  "common.no": "No",
 
   // ---- CSV import dialog ----
   "import.title": "Import transactions from CSV",
@@ -248,6 +234,7 @@ const en = {
   "details.shareOfPanel": "{period} — share of {panel}",
   "details.shareOfSlice": "Share of {name}",
   "details.shareOfTotal": "Share of total {panel}",
+  "details.ofTotal": "of total",
   "details.leftThisPeriod": "Left this period",
   "details.was": "was {amount}",
   "details.latestMonth": "This month is the latest there is",
@@ -422,13 +409,8 @@ const en = {
   "unlock.empty": "Passphrase cannot be empty.",
 
   // ---- Date ranges ----
-  "range.thisMonth": "This month",
-  "range.thisYear": "This year",
   "range.allTime": "All time",
   "range.custom": "Custom",
-  "range.setDates": "Set dates",
-  "range.from": "From",
-  "range.to": "To",
   "range.apply": "Apply",
 
   // ---- Settings ----
@@ -528,7 +510,6 @@ const en = {
   "error.category_requires_reassignment": "This category still has {count} transaction(s). Choose a category to move them to.",
   "error.default_category_protected": "The default category cannot be renamed or deleted.",
   "error.parent_is_subcategory": "A subcategory cannot itself hold subcategories.",
-  "error.category_has_subcategories": "This category has subcategories of its own, so it cannot become one.",
   "error.duplicate_transfer_rule": "A transfer rule for {pattern} already exists.",
   "error.balance_out_of_range": "That balance is too large to work with.",
   "error.invalid_reorder": "Couldn't reorder accounts — try reloading the page.",
@@ -565,19 +546,8 @@ const fr: Record<MessageKey, string> = {
   // ---- Shared vocabulary ----
   "common.save": "Enregistrer",
   "common.cancel": "Annuler",
-  "common.delete": "Supprimer",
-  "common.edit": "Modifier",
-  "common.rename": "Renommer",
-  "common.close": "Fermer",
-  "common.confirm": "Confirmer",
-  "common.back": "Retour",
-  "common.next": "Suivant",
-  "common.done": "Terminé",
   "common.loading": "Chargement…",
-  "common.search": "Rechercher",
   "common.none": "Aucune",
-  "common.all": "Tout",
-  "common.total": "Total",
   "common.income": "Revenus",
   "common.expenses": "Dépenses",
   "common.balance": "Solde",
@@ -588,9 +558,6 @@ const fr: Record<MessageKey, string> = {
   "common.account": "Compte",
   "common.subcategory": "Sous-catégorie",
   "common.uncategorized": "Non classé",
-  "common.optional": "facultatif",
-  "common.yes": "Oui",
-  "common.no": "Non",
 
   // ---- CSV import dialog ----
   "import.title": "Importer des transactions depuis un CSV",
@@ -717,6 +684,7 @@ const fr: Record<MessageKey, string> = {
   "details.shareOfPanel": "{period} — part des {panel}",
   "details.shareOfSlice": "Part de {name}",
   "details.shareOfTotal": "Part du total des {panel}",
+  "details.ofTotal": "du total",
   "details.leftThisPeriod": "Reste sur la période",
   "details.was": "était {amount}",
   "details.latestMonth": "Ce mois-ci est le plus récent",
@@ -888,13 +856,8 @@ const fr: Record<MessageKey, string> = {
   "unlock.empty": "La phrase secrète ne peut pas être vide.",
 
   // ---- Date ranges ----
-  "range.thisMonth": "Ce mois-ci",
-  "range.thisYear": "Cette année",
   "range.allTime": "Depuis le début",
   "range.custom": "Personnalisé",
-  "range.setDates": "Choisir les dates",
-  "range.from": "Du",
-  "range.to": "Au",
   "range.apply": "Appliquer",
 
   // ---- Settings ----
@@ -994,7 +957,6 @@ const fr: Record<MessageKey, string> = {
   "error.category_requires_reassignment": "Cette catégorie contient encore {count} transaction(s). Choisissez une catégorie où les déplacer.",
   "error.default_category_protected": "La catégorie par défaut ne peut être ni renommée ni supprimée.",
   "error.parent_is_subcategory": "Une sous-catégorie ne peut pas elle-même contenir des sous-catégories.",
-  "error.category_has_subcategories": "Cette catégorie a ses propres sous-catégories, elle ne peut donc pas en devenir une.",
   "error.duplicate_transfer_rule": "Une règle de virement pour {pattern} existe déjà.",
   "error.balance_out_of_range": "Ce solde est trop grand pour être traité.",
   "error.invalid_reorder": "Impossible de réorganiser les comptes — essayez de recharger la page.",
@@ -1152,12 +1114,6 @@ export function numberSeparators(): NumberSeparators {
   return i18n.language === "fr"
     ? { group: " ", decimal: "," } // narrow no-break space, per French typography
     : { group: ",", decimal: "." };
-}
-
-/** Whether the language writes a space before the unit in "12 %" (French
- * does; English does not). */
-export function spaceBeforeUnit(): string {
-  return i18n.language === "fr" ? " " : "";
 }
 
 /* ------------------------------------------------------------------ *

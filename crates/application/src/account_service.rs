@@ -180,20 +180,6 @@ impl<'a> AccountService<'a> {
     }
 }
 
-/// Overview's "total available" — the sum of every account's balance.
-pub fn total_available(accounts: &[AccountWithBalance]) -> Option<Money> {
-    accounts
-        .iter()
-        .try_fold(None::<Money>, |acc, a| {
-            let sum = match acc {
-                Some(running) => running.add(&a.balance).ok()?,
-                None => a.balance.clone(),
-            };
-            Some(Some(sum))
-        })
-        .flatten()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -460,25 +446,6 @@ mod tests {
         assert_eq!(accounts[0].balance.minor_units(), 2_000);
         assert!(!accounts[0].account.is_opening_balance_set());
         assert_eq!(accounts[0].transaction_count, 4);
-    }
-
-    #[test]
-    fn total_available_sums_all_accounts() {
-        let repo = FakeAccountRepository::default();
-        let service = AccountService::new(&repo, Currency::new("USD").unwrap());
-        let checking = service.create_account("Checking").unwrap();
-        let savings = service.create_account("Savings").unwrap();
-        service
-            .establish_opening_balance(checking.id(), 5_000)
-            .unwrap();
-        service
-            .establish_opening_balance(savings.id(), 2_000)
-            .unwrap();
-
-        let accounts = service.list_accounts_with_balance().unwrap();
-        let total = total_available(&accounts).unwrap();
-
-        assert_eq!(total.minor_units(), 7_000);
     }
 
     #[test]

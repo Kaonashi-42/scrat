@@ -267,13 +267,6 @@ pub fn detect_recurring_charges(
     charges
 }
 
-/// Sum of the monthly-equivalent cost of every *active* charge.
-pub fn monthly_commitment(charges: &[RecurringCharge]) -> i64 {
-    charges.iter().filter(|c| c.is_active).fold(0i64, |sum, c| {
-        sum.saturating_add(c.monthly_equivalent_minor_units)
-    })
-}
-
 fn analyze_merchant(
     merchant_key: String,
     group: &[&Transaction],
@@ -600,23 +593,6 @@ mod tests {
 
         assert_eq!(charges.len(), 1);
         assert!(!charges[0].is_active);
-    }
-
-    #[test]
-    fn monthly_commitment_counts_only_active_charges() {
-        let transactions = vec![
-            expense(date(2026, 4, 12), -1000, "LIVE ONE"),
-            expense(date(2026, 5, 12), -1000, "LIVE ONE"),
-            expense(date(2026, 6, 12), -1000, "LIVE ONE"),
-            expense(date(2025, 9, 3), -5000, "CANCELLED ONE"),
-            expense(date(2025, 10, 3), -5000, "CANCELLED ONE"),
-            expense(date(2025, 11, 3), -5000, "CANCELLED ONE"),
-        ];
-
-        let charges = detect_recurring_charges(&transactions, date(2026, 6, 20));
-
-        assert_eq!(charges.len(), 2);
-        assert_eq!(monthly_commitment(&charges), 1000);
     }
 
     /// Two charges from one merchant on one day are one visit. Left uncollapsed

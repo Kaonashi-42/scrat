@@ -107,5 +107,5 @@ reset-db: ## Permanently delete the local encrypted database (all data is lost)
 		esac; \
 	fi
 
-sample-db:
+sample-db: ## Seed a fabricated demo database in sample-data/ (gitignored) and print its passphrase
 	cargo run -p scrat --example seed_sample_db

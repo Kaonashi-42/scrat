@@ -17,8 +17,6 @@ pub enum ApplicationError {
     CategoryNotFound,
     #[error("a subcategory cannot itself be used as a parent")]
     ParentIsSubcategory,
-    #[error("category has its own subcategories and cannot become one")]
-    HasSubcategories,
     #[error("category still has {0} transaction(s); choose a category to reassign them to")]
     RequiresReassignment(u64),
     #[error("the default '{0}' category cannot be renamed or deleted")]
@@ -74,27 +72,6 @@ impl<'a> CategoryService<'a> {
     pub fn set_category_icon(&self, id: CategoryId, icon: &str) -> Result<(), ApplicationError> {
         let mut category = self.get(id)?;
         category.set_icon(Some(CategoryIcon::new(icon)?))?;
-        self.repo.update(&category)?;
-        Ok(())
-    }
-
-    pub fn move_category(
-        &self,
-        id: CategoryId,
-        new_parent_id: Option<CategoryId>,
-    ) -> Result<(), ApplicationError> {
-        let mut category = self.get(id)?;
-        if let Some(parent_id) = new_parent_id {
-            let parent = self.get(parent_id)?;
-            if parent.parent_id().is_some() {
-                return Err(ApplicationError::ParentIsSubcategory);
-            }
-            let all = self.repo.list_all()?;
-            if has_subcategories(id, &all) {
-                return Err(ApplicationError::HasSubcategories);
-            }
-        }
-        category.set_parent(new_parent_id)?;
         self.repo.update(&category)?;
         Ok(())
     }
@@ -671,45 +648,6 @@ mod tests {
         let result = service.create_category("Watercolor", Some(paint.id()));
 
         assert!(matches!(result, Err(ApplicationError::ParentIsSubcategory)));
-    }
-
-    #[test]
-    fn move_category_rejects_subcategory_as_parent() {
-        let repo = FakeCategoryRepository::default();
-        let service = CategoryService::new(&repo);
-        let hobby = service.create_category("Hobby", None).unwrap();
-        let paint = service.create_category("Paint", Some(hobby.id())).unwrap();
-        let other = service.create_category("Other", None).unwrap();
-
-        let result = service.move_category(other.id(), Some(paint.id()));
-
-        assert!(matches!(result, Err(ApplicationError::ParentIsSubcategory)));
-    }
-
-    #[test]
-    fn move_category_rejects_when_category_has_subcategories() {
-        let repo = FakeCategoryRepository::default();
-        let service = CategoryService::new(&repo);
-        let hobby = service.create_category("Hobby", None).unwrap();
-        service.create_category("Paint", Some(hobby.id())).unwrap();
-        let other = service.create_category("Other", None).unwrap();
-
-        let result = service.move_category(hobby.id(), Some(other.id()));
-
-        assert!(matches!(result, Err(ApplicationError::HasSubcategories)));
-    }
-
-    #[test]
-    fn move_category_allows_valid_reparent() {
-        let repo = FakeCategoryRepository::default();
-        let service = CategoryService::new(&repo);
-        let a = service.create_category("A", None).unwrap();
-        let b = service.create_category("B", None).unwrap();
-
-        service.move_category(b.id(), Some(a.id())).unwrap();
-
-        let stored = repo.find_by_id(b.id()).unwrap().unwrap();
-        assert_eq!(stored.parent_id(), Some(a.id()));
     }
 
     #[test]

@@ -190,13 +190,6 @@ impl TransactionRole {
             other => Err(TransactionError::UnknownRole(other.to_string())),
         }
     }
-
-    /// Whether this role should be summed into income and expense reporting.
-    /// Note that it is *not* excluded from account balances — the money
-    /// really did move, so every role counts there.
-    pub fn counts_toward_income_and_expenses(&self) -> bool {
-        matches!(self, Self::Normal)
-    }
 }
 
 /// *How* the money moved — the instrument the bank put on the statement
@@ -479,13 +472,6 @@ mod tests {
     }
 
     #[test]
-    fn only_normal_transactions_count_toward_income_and_expenses() {
-        assert!(TransactionRole::Normal.counts_toward_income_and_expenses());
-        assert!(!TransactionRole::Transfer.counts_toward_income_and_expenses());
-        assert!(!TransactionRole::Adjustment.counts_toward_income_and_expenses());
-    }
-
-    #[test]
     fn role_round_trips_through_its_stored_string() {
         for role in [
             TransactionRole::Normal,
@@ -549,7 +535,6 @@ mod tests {
             .with_operation_kind(OperationKind::BankTransfer);
 
         assert_eq!(transaction.role(), TransactionRole::Normal);
-        assert!(transaction.role().counts_toward_income_and_expenses());
     }
 
     #[test]

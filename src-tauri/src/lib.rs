@@ -34,7 +34,6 @@ pub fn run() {
             categories::create_category,
             categories::rename_category,
             categories::set_category_icon,
-            categories::move_category,
             categories::delete_category,
             categories::get_rent_category,
             categories::set_rent_category,

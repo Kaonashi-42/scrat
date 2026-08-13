@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="acorn.png" alt="Scrat logo" width="96" />
+  <img src="docs/acorn.png" alt="Scrat logo" width="96" />
 </p>
 
 <h1 align="center">Scrat</h1>

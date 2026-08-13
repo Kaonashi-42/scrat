@@ -1334,7 +1334,7 @@
                           <span
                             class="percent-of-total"
                             title={t("details.shareOfTotal", { panel: label.toLowerCase() })}
-                            >· {sub.percentOfTotal.toFixed(1)}% of total</span
+                            >· {sub.percentOfTotal.toFixed(1)}% {t("details.ofTotal")}</span
                           >
                         </div>
                         <!-- Expanded rows appear already-drawn rather than

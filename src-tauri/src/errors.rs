@@ -125,7 +125,6 @@ pub mod codes {
     pub const CATEGORY_REQUIRES_REASSIGNMENT: &str = "category_requires_reassignment";
     pub const DEFAULT_CATEGORY_PROTECTED: &str = "default_category_protected";
     pub const PARENT_IS_SUBCATEGORY: &str = "parent_is_subcategory";
-    pub const CATEGORY_HAS_SUBCATEGORIES: &str = "category_has_subcategories";
     pub const DUPLICATE_TRANSFER_RULE: &str = "duplicate_transfer_rule";
     pub const BALANCE_OUT_OF_RANGE: &str = "balance_out_of_range";
     pub const INVALID_REORDER: &str = "invalid_reorder";
@@ -266,7 +265,6 @@ impl From<scrat_application::category_service::ApplicationError> for AppError {
             E::Repository(e) => e.into(),
             E::CategoryNotFound => AppError::new(codes::CATEGORY_NOT_FOUND),
             E::ParentIsSubcategory => AppError::new(codes::PARENT_IS_SUBCATEGORY),
-            E::HasSubcategories => AppError::new(codes::CATEGORY_HAS_SUBCATEGORIES),
             E::RequiresReassignment(count) => {
                 AppError::new(codes::CATEGORY_REQUIRES_REASSIGNMENT).with("count", count)
             }

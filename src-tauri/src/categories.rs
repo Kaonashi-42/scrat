@@ -110,17 +110,6 @@ pub fn set_category_icon(state: State<DbState>, id: String, icon: String) -> Res
 }
 
 #[tauri::command]
-pub fn move_category(
-    state: State<DbState>,
-    id: String,
-    parent_id: Option<String>,
-) -> Result<(), AppError> {
-    let id = parse_id(&id)?;
-    let parent_id = parse_optional_id(parent_id)?;
-    with_service(&state, |s| s.move_category(id, parent_id))
-}
-
-#[tauri::command]
 pub fn delete_category(
     state: State<DbState>,
     id: String,
