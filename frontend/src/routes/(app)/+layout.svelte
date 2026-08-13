@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/state";
   import type { Snippet } from "svelte";
+  import { Pin, PinOff } from "@lucide/svelte";
   import FindInPage from "$lib/FindInPage.svelte";
   import Toast from "$lib/Toast.svelte";
   import CommandPalette from "$lib/CommandPalette.svelte";
@@ -9,10 +10,49 @@
   import { t } from "$lib/i18n.svelte";
 
   let { children }: { children: Snippet } = $props();
+
+  /* Whether the sidebar stays expanded. A display preference with no user data
+     in it, so it lives in `localStorage` rather than the encrypted database —
+     nothing here is worth a migration. Pinned is the default: a first-run user
+     who has just created a passphrase has never seen the nav, and a sidebar
+     that only appears on hover is not discoverable. */
+  const PIN_KEY = "scrat.navPinned";
+
+  function storedPin(): boolean {
+    try {
+      return localStorage.getItem(PIN_KEY) !== "false";
+    } catch {
+      return true;
+    }
+  }
+
+  let pinned = $state(storedPin());
+
+  function togglePin(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
+    pinned = !pinned;
+    try {
+      localStorage.setItem(PIN_KEY, String(pinned));
+    } catch {
+      // A preference that can't be persisted still applies to this session.
+    }
+    // The button keeps focus after a click, and `nav:focus-within` holds the
+    // sidebar open — so unpinning would look like it did nothing until the
+    // user clicked elsewhere.
+    if (!pinned) event.currentTarget.blur();
+  }
 </script>
 
 <div class="shell">
-  <nav>
+  <nav class:pinned>
+    <button
+      class="pin"
+      onclick={togglePin}
+      title={t(pinned ? "nav.unpin" : "nav.pin")}
+      aria-label={t(pinned ? "nav.unpin" : "nav.pin")}
+      aria-pressed={pinned}
+    >
+      {#if pinned}<PinOff size={16} />{:else}<Pin size={16} />{/if}
+    </button>
     <div class="brand">
       <img src="/favicon.png" alt="Scrat" />
       <span>Scrat</span>
@@ -64,7 +104,8 @@
   }
 
   nav:hover,
-  nav:focus-within {
+  nav:focus-within,
+  nav.pinned {
     width: 8.5rem;
     background-color: var(--color-shade-2);
     border-right: 1px solid var(--color-shade-3);
@@ -90,9 +131,38 @@
   }
 
   nav:hover .brand img,
-  nav:focus-within .brand img {
+  nav:focus-within .brand img,
+  nav.pinned .brand img {
     width: 1.75rem;
     height: 1.75rem;
+  }
+
+  .pin {
+    /* Out of flow on purpose: sitting above the brand in the flex column
+       pushed "Scrat" down. */
+    position: absolute;
+    top: 0.25rem;
+    right: 0.5rem;
+    display: flex;
+    padding: 0.25rem;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+  }
+
+  nav:hover .pin,
+  nav:focus-within .pin,
+  nav.pinned .pin {
+    opacity: 0.6;
+  }
+
+  .pin:hover {
+    opacity: 1;
+    background-color: var(--color-shade-3);
   }
 
   .brand span {
@@ -102,7 +172,8 @@
   }
 
   nav:hover .brand span,
-  nav:focus-within .brand span {
+  nav:focus-within .brand span,
+  nav.pinned .brand span {
     opacity: 1;
   }
 
@@ -127,14 +198,17 @@
   }
 
   nav:hover a,
-  nav:focus-within a {
+  nav:focus-within a,
+  nav.pinned a {
     opacity: 0.75;
   }
 
   nav:hover a:hover,
   nav:hover a.active,
   nav:focus-within a:hover,
-  nav:focus-within a.active {
+  nav:focus-within a.active,
+  nav.pinned a:hover,
+  nav.pinned a.active {
     opacity: 1;
   }
 
@@ -164,12 +238,14 @@
   }
 
   nav:hover .lock,
-  nav:focus-within .lock {
+  nav:focus-within .lock,
+  nav.pinned .lock {
     opacity: 0.75;
   }
 
   nav:hover .lock:hover,
-  nav:focus-within .lock:hover {
+  nav:focus-within .lock:hover,
+  nav.pinned .lock:hover {
     opacity: 1;
     background-color: var(--color-shade-3);
   }
@@ -183,7 +259,8 @@
   }
 
   .shell:has(nav:hover) main,
-  .shell:has(nav:focus-within) main {
+  .shell:has(nav:focus-within) main,
+  .shell:has(nav.pinned) main {
     margin-left: 8.5rem;
   }
 </style>

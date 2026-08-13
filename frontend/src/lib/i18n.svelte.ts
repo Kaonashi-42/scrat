@@ -90,6 +90,8 @@ const en = {
   "nav.categories": "Categories",
   "nav.settings": "Settings",
   "nav.lock": "Lock",
+  "nav.pin": "Pin menu",
+  "nav.unpin": "Unpin menu",
 
   // ---- Shared vocabulary ----
   "common.save": "Save",
@@ -557,6 +559,8 @@ const fr: Record<MessageKey, string> = {
   "nav.categories": "Catégories",
   "nav.settings": "Réglages",
   "nav.lock": "Verrouiller",
+  "nav.pin": "Épingler le menu",
+  "nav.unpin": "Détacher le menu",
 
   // ---- Shared vocabulary ----
   "common.save": "Enregistrer",
